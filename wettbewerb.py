@@ -14,7 +14,7 @@ import os
 
 
 ### Achtung! Diese Funktion nicht veraendern.
-def load_references(folder: str = '../training') -> Tuple[List[str], List[List[str]],
+def load_references(folder: str = '../training', idx: int = 0) -> Tuple[List[str], List[List[str]],
                                                           List[np.ndarray],  List[float],
                                                           List[str], List[Tuple[bool,float,float]]]:
     """
@@ -23,6 +23,10 @@ def load_references(folder: str = '../training') -> Tuple[List[str], List[List[s
     ----------
     folder : str, optional
         Ort der Trainingsdaten. Default Wert '../training'.
+    idx : int, optinal
+        Bei welchem index das Laden der Daten starten soll.
+        z.B. idx=10 bedeutet es werden die Daten 10 bis 109 (einschließlich geladen)
+        Wenn ab idx weniger als 100 Datein, lade so viele wie es gibt
 
     Returns
     -------
@@ -48,13 +52,21 @@ def load_references(folder: str = '../training') -> Tuple[List[str], List[List[s
     
     # Erzeuge Datensatz aus Ordner und fülle Listen mit Daten
     dataset = EEGDataset(folder)
-    for item in dataset:
-        ids.append(item[0])
-        channels.append(item[1])
-        data.append(item[2])
-        sampling_frequencies.append(item[3])
-        reference_systems.append(item[4])
-        eeg_labels.append(item[5])
+    data_to_load = 100  # lade bis zu 100 Aufnahmen
+    if(len(dataset)-idx < data_to_load):
+        end = len(dataset)-idx
+    else:
+        end = data_to_load
+    if(idx >= len(dataset)):
+        print("Dataset is smaller than the provided idx")
+        return None
+    for i in range(idx, idx+end):
+        ids.append(dataset[i][0])
+        channels.append(dataset[i][1])
+        data.append(dataset[i][2])
+        sampling_frequencies.append(dataset[i][3])
+        reference_systems.append(dataset[i][4])
+        eeg_labels.append(dataset[i][5])
         
     # Zeige an wie viele Daten geladen wurden
     print("{}\t Dateien wurden geladen.".format(len(ids)))
