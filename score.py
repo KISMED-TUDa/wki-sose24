@@ -109,9 +109,17 @@ def match_predictions(df_gt:pd.DataFrame,df_pred:pd.DataFrame):
             pred_seizure_present[i] = bool(df_pred['seizure_present'][pred_indx])
             pred_seizure_confidence[i] = df_pred['seizure_confidence'][pred_indx]
             pred_onset[i] = df_pred['onset'][pred_indx]
+            if np.isnan(pred_onset[i]):
+                pred_onset[i] = 0
             pred_onset_confidence[i] = df_pred['onset_confidence'][pred_indx]
+            if np.isnan(pred_onset_confidence[i]):
+                pred_onset_confidence[i] = 0
             pred_offset[i] = df_pred['offset'][pred_indx]
+            if np.isnan(pred_offset[i]):
+                pred_offset[i] = 0
             pred_offset_confidence[i] = df_pred['offset_confidence'][pred_indx]
+            if np.isnan(pred_offset_confidence[i]):
+                pred_offset_confidence[i] = 0
     return gt_seizure_present,gt_onset,gt_offset,pred_seizure_present,pred_onset,pred_offset,pred_seizure_confidence,pred_onset_confidence,pred_offset_confidence
     
 def compute_confusion_matrix(y_gt: np.ndarray,y_pred: np.ndarray) -> List[int]:
